@@ -1,0 +1,7 @@
+*.exe
+*.o
+lex.yy.c
+parser.tab.c
+parser.tab.h
+parser.output
+LICENCE
