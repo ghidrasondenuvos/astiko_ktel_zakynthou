@@ -17,7 +17,7 @@ int yylex(void);
 
 %%
 
-config:
+config: %empty
     | config assignment
     ;
 
