@@ -1,0 +1,7 @@
+CREATE TABLE Students (
+    id int,
+    name varchar(50)
+);
+
+-- ΛΑΘΟΣ: Η στήλη 'id' είναι INT και πάμε να τη συγκρίνουμε με STRING ('George')!
+SELECT id FROM Students WHERE id = 'George';

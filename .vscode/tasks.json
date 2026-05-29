@@ -5,8 +5,6 @@
             "label": "Flex/Bison: Build All",
             "type": "shell",
             "dependsOn": [
-                "Bison: Generate Parser",
-                "Flex: Generate Lexer",
                 "GCC: Compile"
             ],
             "group": {
@@ -45,6 +43,11 @@
                 "${workspaceFolder}\\parser.tab.c",
                 "-o", "${workspaceFolder}\\program.exe"
             ],
+            "dependsOn": [
+                "Bison: Generate Parser",
+                "Flex: Generate Lexer"
+            ],
+            "dependsOrder": "sequence",
             "presentation": { "reveal": "silent", "panel": "shared" },
             "problemMatcher": ["$gcc"]
         },
@@ -58,12 +61,7 @@
                 "panel": "dedicated",
                 "focus": true,
                 "clear": true
-            },
-            "group": {
-                "kind": "test",
-                "isDefault": false
-            },
-            "problemMatcher": []
+            }
         }
     ]
 }

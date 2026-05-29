@@ -1,0 +1,13 @@
+CREATE TABLE Students (
+    student_id int,
+    first_name varchar(50),
+    last_name varchar(50),
+    gpa float
+);
+
+-- Αυτό είναι ένα σχόλιο μονής γραμμής
+SELECT student_id, first_name 
+FROM Students 
+WHERE gpa >= 5.0 AND student_id IN (100, 101, 102)
+ORDER BY last_name
+LIMIT 10;

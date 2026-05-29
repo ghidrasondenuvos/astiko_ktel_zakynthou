@@ -44,6 +44,15 @@
 #if YYDEBUG
 extern int yydebug;
 #endif
+/* "%code requires" blocks.  */
+#line 122 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\parser.y"
+
+    typedef struct {
+        char table_or_alias[50];
+        char col_name[50];
+    } ColumnRef;
+
+#line 56 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\parser.tab.h"
 
 /* Token kinds.  */
 #ifndef YYTOKENTYPE
@@ -54,11 +63,41 @@ extern int yydebug;
     YYEOF = 0,                     /* "end of file"  */
     YYerror = 256,                 /* error  */
     YYUNDEF = 257,                 /* "invalid token"  */
-    SET = 258,                     /* SET  */
-    EQUALS = 259,                  /* EQUALS  */
-    SEMICOLON = 260,               /* SEMICOLON  */
-    VALUE = 261,                   /* VALUE  */
-    IDENTIFIER = 262               /* IDENTIFIER  */
+    CREATE = 258,                  /* CREATE  */
+    TABLE = 259,                   /* TABLE  */
+    SELECT = 260,                  /* SELECT  */
+    FROM = 261,                    /* FROM  */
+    WHERE = 262,                   /* WHERE  */
+    GROUP = 263,                   /* GROUP  */
+    BY = 264,                      /* BY  */
+    ORDER = 265,                   /* ORDER  */
+    LIMIT = 266,                   /* LIMIT  */
+    JOIN = 267,                    /* JOIN  */
+    ON = 268,                      /* ON  */
+    AS = 269,                      /* AS  */
+    TYPE_INT = 270,                /* TYPE_INT  */
+    TYPE_FLOAT = 271,              /* TYPE_FLOAT  */
+    TYPE_VARCHAR = 272,            /* TYPE_VARCHAR  */
+    AND = 273,                     /* AND  */
+    OR = 274,                      /* OR  */
+    NOT = 275,                     /* NOT  */
+    IN = 276,                      /* IN  */
+    EQUALS = 277,                  /* EQUALS  */
+    NOT_EQUALS = 278,              /* NOT_EQUALS  */
+    GREATER_EQUAL = 279,           /* GREATER_EQUAL  */
+    LESS_EQUAL = 280,              /* LESS_EQUAL  */
+    GREATER = 281,                 /* GREATER  */
+    LESS = 282,                    /* LESS  */
+    COMMA = 283,                   /* COMMA  */
+    SEMICOLON = 284,               /* SEMICOLON  */
+    DOT = 285,                     /* DOT  */
+    LPAREN = 286,                  /* LPAREN  */
+    RPAREN = 287,                  /* RPAREN  */
+    ASTERISK = 288,                /* ASTERISK  */
+    INT_VAL = 289,                 /* INT_VAL  */
+    FLOAT_VAL = 290,               /* FLOAT_VAL  */
+    STRING_VAL = 291,              /* STRING_VAL  */
+    IDENTIFIER = 292               /* IDENTIFIER  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -67,12 +106,15 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 9 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\parser.y"
+#line 132 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\parser.y"
 
-    int ival;
-    char *sval;
+    int ival;        // Ο σάκος μπορεί να κρατήσει έναν κανονικό αριθμό.
+    float fval;      // Ή έναν αριθμό με τελεία (δεκαδικό).
+    char *sval;      // Ή μια λέξη.
+    ColumnRef col;   // Ή μια στήλη με το όνομα του πίνακα της.
+    int type_val;    // Ή έναν κωδικό τύπου.
 
-#line 76 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\parser.tab.h"
+#line 118 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\parser.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;
