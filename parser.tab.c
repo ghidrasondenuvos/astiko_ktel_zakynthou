@@ -67,38 +67,28 @@
 
 
 /* First part of user prologue.  */
-#line 1 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\parser.y"
+#line 4 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\parser.y"
 
-/* Φωνάζουμε 3 έξυπνους φίλους μας που ξέρουν να κάνουν ειδικά πράγματα: */
-#include <stdio.h>   // Ο φίλος που ξέρει να γράφει και να διαβάζει μηνύματα στην οθόνη.
-#include <stdlib.h>  // Ο φίλος που ξέρει να μας δίνει άδεια κουτιά στη μνήμη για να βάζουμε πράγματα.
-#include <string.h>  // Ο φίλος που είναι ξεφτέρης στο να συγκρίνει λέξεις.
+#include <stdio.h>   
+#include <stdlib.h>  
+#include <string.h>  
 
-// Λέμε στο ρομπότ ότι θα έχουμε μια φωνή για να φωνάζουμε "Λάθος!" αν κάτι πάει στραβά.
 void yyerror(const char *s);
-// Λέμε στο ρομπότ ότι υπάρχει ένα βοηθάκι που του δίνει μία-μία τις λέξεις.
 int yylex(void);
-
-// Ένας μετρητής που ξεκινάει από το 1 για να ξέρουμε σε ποια γραμμή του βιβλίου διαβάζουμε.
 int line_num = 1; 
+#line 17 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\parser.y"
 
-/* =========================================================================
-   ΔΟΜΕΣ ΔΕΔΟΜΕΝΩΝ & ΠΙΝΑΚΑΣ ΣΥΜΒΟΛΩΝ (ΤΟ ΜΕΓΑΛΟ ΝΤΟΥΛΑΠΙ ΜΕ ΤΑ ΠΑΙΧΝΙΔΙΑ)
-   ========================================================================= */
-#define MAX_TABLES 50        // Κανόνας: Μπορούμε να έχουμε το πολύ 50 μεγάλα κουτιά (πίνακες).
-#define MAX_COLUMNS 50       // Κανόνας: Κάθε μεγάλο κουτί χωράει το πολύ 50 μικρά κουτάκια (στήλες).
-#define MAX_USED_COLUMNS 100 // Κανόνας: Μπορούμε να θυμόμαστε μέχρι 100 αυτοκόλλητα μαζί.
+#define MAX_TABLES 50        
+#define MAX_COLUMNS 50       
+#define MAX_USED_COLUMNS 100 
 
-// Φτιάχνουμε ένα μαγικό μεγεθυντικό φακό για να βλέπουμε αν δύο λέξεις είναι ίδιες...
+/* Βοηθητική συνάρτηση για σύγκριση συμβολοσειρών χωρίς διάκριση πεζών/κεφαλαίων */
 int icmp(const char *s1, const char *s2) {
-    // ...ακόμα κι αν η μία έχει μεγάλα γράμματα και η άλλη μικρά!
     while (*s1 && *s2) {
         char c1 = *s1;
         char c2 = *s2;
-        // Αν είναι κεφαλαίο γράμμα, το κάνουμε μικρό στο μυαλό μας.
         if (c1 >= 'A' && c1 <= 'Z') c1 = c1 - 'A' + 'a';
         if (c2 >= 'A' && c2 <= 'Z') c2 = c2 - 'A' + 'a';
-        // Αν βρούμε γράμμα που δεν ταιριάζει, σταματάμε.
         if (c1 != c2) return c1 - c2;
         s1++; s2++;
     }
@@ -108,86 +98,73 @@ int icmp(const char *s1, const char *s2) {
     return c1 - c2;
 }
 
-// Σχεδιάζουμε πώς είναι μια "Στήλη": Έχει ένα όνομα (sticker) και έναν τύπο (τι παιχνίδι χωράει).
+/* Ορισμός δομών για τη διαχείριση της βάσης δεδομένων */
 typedef struct {
-    char name[50]; // Το όνομα της στήλης.
-    int type;      // 1 για αριθμούς, 2 για δεκαδικούς, 3 για γράμματα.
+    char name[50]; 
+    int type;      // 1: INT, 2: FLOAT, 3: VARCHAR
 } Column;
 
-// Σχεδιάζουμε πώς είναι ένας "Πίνακας": Ένα μεγάλο κουτί που έχει όνομα και πολλά μικρά κουτάκια μέσα.
 typedef struct {
-    char name[50];             // Το όνομα του πίνακα.
-    Column columns[MAX_COLUMNS]; // Τα μικρά κουτάκια (στήλες) που κρύβει μέσα του.
-    int col_count;             // Πόσα κουτάκια βάλαμε τελικά μέσα.
+    char name[50];             
+    Column columns[MAX_COLUMNS];
+    int col_count;             
 } Table;
 
-// Αυτό είναι το μεγάλο μας Ντουλάπι! Εδώ θα κλειδώνουμε όλους τους πίνακες που φτιάχνουμε.
 Table symbol_table[MAX_TABLES];
-int table_count = 0; // Στην αρχή το ντουλάπι είναι άδειο (0 πίνακες).
+int table_count = 0; 
 
-// Πρόχειρα χαρτιά για να σημειώνουμε πράγματα την ώρα που φτιάχνουμε έναν πίνακα:
-char current_table_name[50];       // Το όνομα του πίνακα που φτιάχνουμε ΤΩΡΑ.
-Column temp_columns[MAX_COLUMNS];  // Οι στήλες που μαζεύουμε πρόχειρα.
-int temp_col_count = 0;            // Πόσες στήλες μαζέψαμε προσωρινά.
+char current_table_name[50];
+Column temp_columns[MAX_COLUMNS];  
+int temp_col_count = 0;
 
-// Σχεδιάζουμε ένα κουτάκι "Ενεργός Πίνακας": Μας λέει ποιον πίνακα χρησιμοποιούμε τώρα και ποιο είναι το κρυφό του όνομα (Alias).
 typedef struct {
-    char table_name[50]; // Το αληθινό όνομα.
-    char alias_name[50]; // Το χαϊδευτικό/σύντομο όνομα.
+    char table_name[50]; 
+    char alias_name[50]; 
 } ActiveTable;
 
-// Μια λίστα για να βλέπουμε ποιους πίνακες έχουμε ανοίξει πάνω στο χαλί για να παίξουμε.
 ActiveTable active_tables[MAX_TABLES];
-int active_table_count = 0; // Στην αρχή κανένας πίνακας δεν είναι ανοιχτός.
+int active_table_count = 0; 
 
-// Σχεδιάζουμε μια λίστα για να γράφουμε ποιες στήλες ζήτησε το παιδί.
 typedef struct {
-    char table_or_alias[50]; // Από ποιο κουτί είναι η στήλη.
-    char col_name[50];       // Πώς τη λένε τη στήλη.
-    int line;                // Σε ποια γραμμή τη βρήκαμε.
+    char table_or_alias[50];
+    char col_name[50];       
+    int line;
 } UsedColumn;
 
-// Εδώ αποθηκεύουμε όλες τις στήλες που χρησιμοποιούνται για να τις ελέγξουμε στο τέλος.
 UsedColumn used_columns[MAX_USED_COLUMNS];
-int used_column_count = 0; // Ξεκινάει από το μηδέν.
-
-// Πρόχειρος κουμπαράς για να κρατάει τους τύπους δεδομένων όταν ελέγχουμε τη λίστα "IN".
+int used_column_count = 0; 
 int current_in_types[100];
 int current_in_count = 0;
 
-/* --- ΜΑΓΙΚΕΣ ΣΥΝΑΡΤΗΣΕΙΣ ΑΝΑΖΗΤΗΣΗΣ --- */
-
-// Ψάχνει στο μεγάλο ντουλάπι να βρει αν υπάρχει ο πίνακας με αυτό το όνομα.
+/* Συναρτήσεις αναζήτησης στον πίνακα συμβόλων */
 int find_table(const char *name) {
     for (int i = 0; i < table_count; i++) {
-        if (icmp(symbol_table[i].name, name) == 0) return i; // Τον βρήκαμε!
+        if (icmp(symbol_table[i].name, name) == 0) return i;
     }
-    return -1; // Δεν υπάρχει τέτοιος πίνακας στο ντουλάπι.
+    return -1; 
 }
 
-// Ψάχνει μέσα σε ένα συγκεκριμένο μεγάλο κουτί να δει αν υπάρχει το μικρό κουτάκι (στήλη) που θέλουμε.
 int find_column_in_table(int table_idx, const char *col_name) {
     if (table_idx < 0 || table_idx >= table_count) return -1;
     for (int i = 0; i < symbol_table[table_idx].col_count; i++) {
         if (icmp(symbol_table[table_idx].columns[i].name, col_name) == 0) {
-            return symbol_table[table_idx].columns[i].type; // Τη βρήκαμε και επιστρέφουμε τον τύπο της!
-        }
-    }
-    return -1; // Δεν υπάρχει αυτή η στήλη εκεί μέσα.
-}
-
-// Κοιτάζει τους πίνακες που έχουμε ανοιχτούς στο χαλί και μας λέει ποιο είναι το αληθινό όνομα πίσω από ένα χαϊδευτικό (alias).
-int resolve_active_table(const char *name_or_alias) {
-    for (int i = 0; i < active_table_count; i++) {
-        if (icmp(active_tables[i].alias_name, name_or_alias) == 0 ||
-            icmp(active_tables[i].table_name, name_or_alias) == 0) {
-            return find_table(active_tables[i].table_name); // Επιστρέφει τη θέση του αληθινού πίνακα.
+            return symbol_table[table_idx].columns[i].type;
         }
     }
     return -1;
 }
 
-#line 191 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\parser.tab.c"
+int resolve_active_table(const char *name_or_alias) {
+    for (int i = 0; i < active_table_count; i++) {
+        if (icmp(active_tables[i].alias_name, name_or_alias) == 0 ||
+            icmp(active_tables[i].table_name, name_or_alias) == 0) {
+            return find_table(active_tables[i].table_name);
+        }
+    }
+    return -1;
+}
+
+#line 168 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\parser.tab.c"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -667,12 +644,12 @@ static const yytype_int8 yytranslate[] =
 /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int16 yyrline[] =
 {
-       0,   169,   169,   174,   175,   180,   181,   186,   186,   209,
-     210,   215,   233,   234,   235,   247,   247,   335,   336,   341,
-     342,   347,   358,   373,   384,   396,   411,   413,   418,   422,
-     424,   429,   462,   486,   510,   511,   512,   513,   518,   518,
-     518,   518,   518,   518,   523,   524,   525,   530,   534,   540,
-     542,   546,   548,   552,   554
+       0,   146,   146,   150,   151,   155,   156,   163,   163,   183,
+     184,   188,   203,   204,   205,   218,   218,   297,   298,   302,
+     303,   307,   316,   328,   339,   350,   366,   368,   372,   375,
+     377,   381,   409,   432,   455,   456,   457,   458,   462,   462,
+     462,   463,   463,   463,   467,   468,   469,   473,   477,   482,
+     484,   487,   489,   492,   494
 };
 #endif
 
@@ -1295,102 +1272,94 @@ yyreduce:
   switch (yyn)
     {
   case 7: /* $@1: %empty  */
-#line 186 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\parser.y"
+#line 163 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\parser.y"
                             {
-        // Μόλις δούμε το όνομα του πίνακα, ελέγχουμε αν υπάρχει ήδη στο ντουλάπι.
         if (find_table((yyvsp[0].sval)) != -1) {
             fprintf(stderr, "\n[Σημασιολογικό Σφάλμα] Στη γραμμή %d: Ο πίνακας '%s' υπάρχει ήδη.\n", line_num, (yyvsp[0].sval));
-            exit(1); // Αν υπάρχει ήδη, το ρομπότ θυμώνει και σταματάει το παιχνίδι!
+            exit(1); 
         }
-        strcpy(current_table_name, (yyvsp[0].sval)); // Σημειώνουμε το όνομα του νέου πίνακα.
-        temp_col_count = 0;              // Μηδενίζουμε τις πρόχειρες στήλες.
-        free((yyvsp[0].sval));                        // Πετάμε το χαρτάκι που δεν χρειαζόμαστε πια.
+        strcpy(current_table_name, (yyvsp[0].sval)); 
+        temp_col_count = 0;
+        free((yyvsp[0].sval));                        
     }
-#line 1310 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\parser.tab.c"
+#line 1286 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\parser.tab.c"
     break;
 
   case 8: /* create_table_stmt: CREATE TABLE IDENTIFIER $@1 LPAREN create_col_list RPAREN SEMICOLON  */
-#line 195 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\parser.y"
+#line 171 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\parser.y"
                                               {
-        // Μόλις κλείσει η παρένθεση και μπει το ερωτηματικό (;), βάζουμε τον πίνακα στο μεγάλο ντουλάπι!
         strcpy(symbol_table[table_count].name, current_table_name);
         symbol_table[table_count].col_count = temp_col_count;
         for (int i = 0; i < temp_col_count; i++) {
             symbol_table[table_count].columns[i] = temp_columns[i];
         }
-        table_count++; // Τώρα έχουμε έναν πίνακα παραπάνω στο ντουλάπι μας!
+        table_count++; 
         printf("\n[OK] Δημιουργήθηκε ο πίνακας '%s'.\n\n", current_table_name);
     }
-#line 1325 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\parser.tab.c"
+#line 1300 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\parser.tab.c"
     break;
 
   case 11: /* create_col_def: IDENTIFIER data_type  */
-#line 215 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\parser.y"
+#line 188 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\parser.y"
                          {
-        // Ελέγχουμε αν βάλαμε κατά λάθος δύο φορές την ίδια στήλη στο ίδιο κουτί!
         for (int i = 0; i < temp_col_count; i++) {
             if (icmp(temp_columns[i].name, (yyvsp[-1].sval)) == 0) {
                 fprintf(stderr, "\n[Σημασιολογικό Σφάλμα] Στη γραμμή %d: Η στήλη '%s' ορίζεται δύο φορές στον πίνακα '%s'.\n", line_num, (yyvsp[-1].sval), current_table_name);
-                exit(1); // Ζαβολιά! Το ρομπότ σταματάει.
+                exit(1);
             }
         }
-        // Αν όλα είναι καλά, την κρατάμε προσωρινά.
         strcpy(temp_columns[temp_col_count].name, (yyvsp[-1].sval));
         temp_columns[temp_col_count].type = (yyvsp[0].type_val);
         temp_col_count++;
         free((yyvsp[-1].sval));
     }
-#line 1344 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\parser.tab.c"
+#line 1317 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\parser.tab.c"
     break;
 
   case 12: /* data_type: TYPE_INT  */
-#line 233 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\parser.y"
+#line 203 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\parser.y"
              { (yyval.type_val) = 1; }
-#line 1350 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\parser.tab.c"
+#line 1323 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\parser.tab.c"
     break;
 
   case 13: /* data_type: TYPE_FLOAT  */
-#line 234 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\parser.y"
+#line 204 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\parser.y"
                  { (yyval.type_val) = 2; }
-#line 1356 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\parser.tab.c"
+#line 1329 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\parser.tab.c"
     break;
 
   case 14: /* data_type: TYPE_VARCHAR LPAREN INT_VAL RPAREN  */
-#line 235 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\parser.y"
+#line 205 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\parser.y"
                                          {
-        // Κωδικός 3: Λέξεις. Αλλά το μέγεθος της λέξης πρέπει να είναι θετικός αριθμός!
         if ((yyvsp[-1].ival) <= 0) {
             fprintf(stderr, "\n[Σημασιολογικό Σφάλμα] Στη γραμμή %d: Το μέγεθος του VARCHAR πρέπει να είναι > 0.\n", line_num);
             exit(1);
         }
         (yyval.type_val) = 3;
     }
-#line 1369 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\parser.tab.c"
+#line 1341 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\parser.tab.c"
     break;
 
   case 15: /* $@2: %empty  */
-#line 247 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\parser.y"
+#line 218 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\parser.y"
            { 
-        // Μόλις ξεκινήσει το SELECT, καθαρίζουμε τις λίστες μας για να γράψουμε καινούργια πράγματα.
         used_column_count = 0; 
         active_table_count = 0; 
     }
-#line 1379 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\parser.tab.c"
+#line 1350 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\parser.tab.c"
     break;
 
   case 16: /* select_stmt: SELECT $@2 select_col_list FROM table_ref join_clause_list where_clause group_by_clause order_by_clause limit_clause SEMICOLON  */
-#line 252 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\parser.y"
+#line 222 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\parser.y"
                                                                                                                         {
         
-        /* ΤΩΡΑ ΤΟ ΡΟΜΠΟΤ ΚΑΝΕΙ ΤΟΝ ΜΕΓΑΛΟ ΕΛΕΓΧΟ ΣΕ ΟΛΕΣ ΤΙΣ ΣΤΗΛΕΣ ΠΟΥ ΖΗΤΗΣΑΜΕ! */
         for (int i = 0; i < used_column_count; i++) {
-            char *prefix = used_columns[i].table_or_alias; // Το όνομα του πίνακα/alias που γράψαμε μπροστά από την τελεία.
-            char *cname = used_columns[i].col_name;       // Το όνομα της στήλης.
-            int line = used_columns[i].line;              // Η γραμμή που τη βρήκαμε.
-            int t_idx = -1;                               // Η θέση του πίνακα στο ντουλάπι.
+            char *prefix = used_columns[i].table_or_alias;
+            char *cname = used_columns[i].col_name;       
+            int line = used_columns[i].line;              
+            int t_idx = -1;
             
             if (strlen(prefix) > 0) {
-                // Αν γράψαμε πρόθεμα (π.χ. s.gpa), ψάχνουμε να βρούμε αν αυτό το χαϊδευτικό (alias) υπάρχει στο χαλί μας.
                 int match_idx = -1;
                 for (int j = 0; j < active_table_count; j++) {
                     if (icmp(active_tables[j].alias_name, prefix) == 0) {
@@ -1399,13 +1368,12 @@ yyreduce:
                     }
                 }
                 
-                // Αν δεν το βρούμε ως alias, κοιτάμε αν το παιδί χρησιμοποίησε το αληθινό όνομα του πίνακα, ενώ είχε δώσει alias!
                 if (match_idx == -1) {
                     for (int j = 0; j < active_table_count; j++) {
                         if (icmp(active_tables[j].table_name, prefix) == 0) {
                             if (icmp(active_tables[j].table_name, active_tables[j].alias_name) != 0) {
                                 fprintf(stderr, "\n[Σημασιολογικό Σφάλμα] Στη γραμμή %d: Πρέπει να χρησιμοποιηθεί το alias '%s' αντί για το όνομα του πίνακα '%s'.\n", line, active_tables[j].alias_name, prefix);
-                                exit(1); // Λάθος! Αφού συμφωνήσαμε να το λέμε με το χαϊδευτικό του!
+                                exit(1);
                             }
                             match_idx = j;
                             break;
@@ -1415,15 +1383,13 @@ yyreduce:
                 
                 if (match_idx == -1) {
                     fprintf(stderr, "\n[Σημασιολογικό Σφάλμα] Στη γραμμή %d: Ο πίνακας ή το alias '%s' δεν συμμετέχει στο ερώτημα.\n", line, prefix);
-                    exit(1); // Αυτός ο πίνακας δεν είναι καν ανοιχτός στο χαλί!
+                    exit(1);
                 }
                 t_idx = find_table(active_tables[match_idx].table_name);
             } else {
-                // Αν γράψαμε τη στήλη σκέτη (χωρίς τελεία, π.χ. gpa), το ρομπότ ψάχνει σε όλους τους ανοιχτούς πίνακες να τη βρει.
                 int matches = 0;
                 int requires_alias = 0;
                 char req_alias_name[50] = "";
-                
                 for (int j = 0; j < active_table_count; j++) {
                     int tmp = find_table(active_tables[j].table_name);
                     if (find_column_in_table(tmp, cname) != -1) {
@@ -1438,82 +1404,75 @@ yyreduce:
                 
                 if (matches == 0) {
                     fprintf(stderr, "\n[Σημασιολογικό Σφάλμα] Στη γραμμή %d: Η στήλη '%s' δεν ανήκει στους επιλεγμένους πίνακες.\n", line, cname);
-                    exit(1); // Δεν υπάρχει αυτή η στήλη σε κανέναν ανοιχτό πίνακα.
+                    exit(1);
                 }
                 if (matches > 1) {
-                    fprintf(stderr, "\n[Σημασιολογικό Σφάλμα] Στη γραμμή %d: Η στήλη '%s' είναι ασαφής (υπάρχει σε πάνω από έναν πίνακα).\n", line, cname);
-                    exit(1); // Μπέρδεμα! Υπάρχει σε δύο πίνακες και το ρομπότ δεν ξέρει ποια από τις δύο εννοούμε!
+                    fprintf(stderr, "\n[Σημασιολογικό Σφάλμα] Στη γραμμή %d: Η στήλη '%s' είναι ασαφής.\n", line, cname);
+                    exit(1);
                 }
                 if (requires_alias) {
                     fprintf(stderr, "\n[Σημασιολογικό Σφάλμα] Στη γραμμή %d: Η στήλη '%s' πρέπει υποχρεωτικά να έχει το πρόθεμα του alias '%s'.\n", line, cname, req_alias_name);
-                    exit(1); // Κανόνας της άσκησης: Αν βάλαμε alias, πρέπει να το χρησιμοποιούμε πάντα!
+                    exit(1);
                 }
             }
             
-            // Τελικός έλεγχος: Υπάρχει πράγματι αυτή η στήλη μέσα στο μεγάλο κουτί στο ντουλάπι;
             if (find_column_in_table(t_idx, cname) == -1) {
                 fprintf(stderr, "\n[Σημασιολογικό Σφάλμα] Στη γραμμή %d: Η στήλη '%s' δεν υπάρχει στον πίνακα '%s'.\n", line, cname, symbol_table[t_idx].name);
                 exit(1);
             }
         }
-        
         printf("\n[OK] Επιτυχής αναγνώριση και έλεγχος εντολής SELECT.\n\n");
     }
-#line 1463 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\parser.tab.c"
+#line 1427 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\parser.tab.c"
     break;
 
   case 21: /* column_item: IDENTIFIER  */
-#line 347 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\parser.y"
+#line 307 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\parser.y"
                {
         strcpy((yyval.col).table_or_alias, "");
         strcpy((yyval.col).col_name, (yyvsp[0].sval));
-        
-        // Τη γράφουμε στη λίστα για να την ελέγξει το ρομπότ στο τέλος.
         strcpy(used_columns[used_column_count].table_or_alias, "");
         strcpy(used_columns[used_column_count].col_name, (yyvsp[0].sval));
         used_columns[used_column_count].line = line_num;
         used_column_count++;
         free((yyvsp[0].sval));
     }
-#line 1479 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\parser.tab.c"
+#line 1441 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\parser.tab.c"
     break;
 
   case 22: /* column_item: IDENTIFIER DOT IDENTIFIER  */
-#line 358 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\parser.y"
+#line 316 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\parser.y"
                                 {
         strcpy((yyval.col).table_or_alias, (yyvsp[-2].sval));
         strcpy((yyval.col).col_name, (yyvsp[0].sval));
-        
-        // Τη γράφουμε στη λίστα μαζί με το πρόθεμά της.
         strcpy(used_columns[used_column_count].table_or_alias, (yyvsp[-2].sval));
         strcpy(used_columns[used_column_count].col_name, (yyvsp[0].sval));
         used_columns[used_column_count].line = line_num;
         used_column_count++;
         free((yyvsp[-2].sval)); free((yyvsp[0].sval));
     }
-#line 1495 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\parser.tab.c"
+#line 1455 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\parser.tab.c"
     break;
 
   case 23: /* table_ref: IDENTIFIER  */
-#line 373 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\parser.y"
+#line 328 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\parser.y"
                {
         int idx = find_table((yyvsp[0].sval));
         if (idx == -1) {
             fprintf(stderr, "\n[Σημασιολογικό Σφάλμα] Στη γραμμή %d: Ο πίνακας '%s' δεν έχει δημιουργηθεί.\n", line_num, (yyvsp[0].sval));
-            exit(1); // Πάμε να παίξουμε με ένα κουτί που δεν έχουμε φτιάξει ποτέ! Λάθος!
+            exit(1);
         }
         strcpy(active_tables[active_table_count].table_name, (yyvsp[0].sval));
         strcpy(active_tables[active_table_count].alias_name, (yyvsp[0].sval));
         active_table_count++;
         free((yyvsp[0].sval));
     }
-#line 1511 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\parser.tab.c"
+#line 1471 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\parser.tab.c"
     break;
 
   case 24: /* table_ref: IDENTIFIER AS IDENTIFIER  */
-#line 384 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\parser.y"
+#line 339 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\parser.y"
                                {
-        // Αν πούμε: FROM Students AS s, τότε το αληθινό είναι "Students" και το χαϊδευτικό είναι "s".
         int idx = find_table((yyvsp[-2].sval));
         if (idx == -1) {
             fprintf(stderr, "\n[Σημασιολογικό Σφάλμα] Στη γραμμή %d: Ο πίνακας '%s' δεν έχει δημιουργηθεί.\n", line_num, (yyvsp[-2].sval));
@@ -1524,13 +1483,12 @@ yyreduce:
         active_table_count++;
         free((yyvsp[-2].sval)); free((yyvsp[0].sval));
     }
-#line 1528 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\parser.tab.c"
+#line 1487 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\parser.tab.c"
     break;
 
   case 25: /* table_ref: IDENTIFIER IDENTIFIER  */
-#line 396 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\parser.y"
+#line 350 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\parser.y"
                             {
-        // Το ίδιο με το από πάνω, αλλά χωρίς τη λέξη AS (π.χ. FROM Students s).
         int idx = find_table((yyvsp[-1].sval));
         if (idx == -1) {
             fprintf(stderr, "\n[Σημασιολογικό Σφάλμα] Στη γραμμή %d: Ο πίνακας '%s' δεν έχει δημιουργηθεί.\n", line_num, (yyvsp[-1].sval));
@@ -1541,13 +1499,12 @@ yyreduce:
         active_table_count++;
         free((yyvsp[-1].sval)); free((yyvsp[0].sval));
     }
-#line 1545 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\parser.tab.c"
+#line 1503 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\parser.tab.c"
     break;
 
   case 31: /* condition: column_item rel_op literal  */
-#line 429 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\parser.y"
+#line 381 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\parser.y"
                                {
-        /* ΕΛΕΓΧΟΣ ΣΥΜΒΑΤΟΤΗΤΑΣ: Ταιριάζουν τα παιχνίδια; */
         int t_idx = -1;
         if (strlen((yyvsp[-2].col).table_or_alias) > 0) {
             t_idx = resolve_active_table((yyvsp[-2].col).table_or_alias);
@@ -1559,33 +1516,28 @@ yyreduce:
         }
         
         if (t_idx != -1) {
-            int col_type = find_column_in_table(t_idx, (yyvsp[-2].col).col_name); // Τι τύπος είναι η στήλη.
-            int lit_type = (yyvsp[0].type_val);                                      // Τι τύπος είναι η τιμή που δώσαμε.
-            
-            // Αν η στήλη θέλει ολόκληρο αριθμό (INT) και εμείς της δώσουμε γράμματα, το ρομπότ φωνάζει!
+            int col_type = find_column_in_table(t_idx, (yyvsp[-2].col).col_name);
+            int lit_type = (yyvsp[0].type_val);                                      
             if (col_type == 1 && lit_type != 1) {
                 fprintf(stderr, "\n[Σημασιολογικό Σφάλμα] Στη γραμμή %d: Η στήλη '%s' είναι INT.\n", line_num, (yyvsp[-2].col).col_name);
                 exit(1);
             }
-            // Αν η στήλη θέλει δεκαδικό (FLOAT) και της δώσουμε γράμματα, πάλι σφάλμα!
             if (col_type == 2 && (lit_type != 1 && lit_type != 2)) {
                 fprintf(stderr, "\n[Σημασιολογικό Σφάλμα] Στη γραμμή %d: Η στήλη '%s' είναι FLOAT.\n", line_num, (yyvsp[-2].col).col_name);
                 exit(1);
             }
-            // Αν η στήλη θέλει λέξη (VARCHAR) και της δώσουμε αριθμό, το ρομπότ σταματάει το παιχνίδι!
             if (col_type == 3 && lit_type != 3) {
                 fprintf(stderr, "\n[Σημασιολογικό Σφάλμα] Στη γραμμή %d: Η στήλη '%s' είναι VARCHAR.\n", line_num, (yyvsp[-2].col).col_name);
                 exit(1);
             }
         }
     }
-#line 1583 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\parser.tab.c"
+#line 1536 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\parser.tab.c"
     break;
 
   case 32: /* condition: column_item IN LPAREN literal_list RPAREN  */
-#line 462 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\parser.y"
+#line 409 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\parser.y"
                                                 {
-        /* Έλεγχος τύπων για την εντολή IN (να είναι όλα τα στοιχεία μέσα στην παρένθεση ίδια με τη στήλη) */
         int t_idx = -1;
         if (strlen((yyvsp[-4].col).table_or_alias) > 0) t_idx = resolve_active_table((yyvsp[-4].col).table_or_alias);
         else {
@@ -1608,13 +1560,12 @@ yyreduce:
             }
         }
     }
-#line 1612 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\parser.tab.c"
+#line 1564 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\parser.tab.c"
     break;
 
   case 33: /* condition: column_item NOT IN LPAREN literal_list RPAREN  */
-#line 486 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\parser.y"
+#line 432 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\parser.y"
                                                     {
-        /* Το ίδιο με το IN, αλλά για το NOT IN */
         int t_idx = -1;
         if (strlen((yyvsp[-5].col).table_or_alias) > 0) t_idx = resolve_active_table((yyvsp[-5].col).table_or_alias);
         else {
@@ -1637,58 +1588,57 @@ yyreduce:
             }
         }
     }
-#line 1641 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\parser.tab.c"
+#line 1592 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\parser.tab.c"
     break;
 
   case 44: /* literal: INT_VAL  */
-#line 523 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\parser.y"
+#line 467 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\parser.y"
             { (yyval.type_val) = 1; }
-#line 1647 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\parser.tab.c"
+#line 1598 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\parser.tab.c"
     break;
 
   case 45: /* literal: FLOAT_VAL  */
-#line 524 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\parser.y"
+#line 468 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\parser.y"
                 { (yyval.type_val) = 2; }
-#line 1653 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\parser.tab.c"
+#line 1604 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\parser.tab.c"
     break;
 
   case 46: /* literal: STRING_VAL  */
-#line 525 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\parser.y"
+#line 469 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\parser.y"
                  { (yyval.type_val) = 3; free((yyvsp[0].sval)); }
-#line 1659 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\parser.tab.c"
+#line 1610 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\parser.tab.c"
     break;
 
   case 47: /* literal_list: literal  */
-#line 530 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\parser.y"
+#line 473 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\parser.y"
             {
         current_in_count = 0;
-        current_in_types[current_in_count++] = (yyvsp[0].type_val); // Βάζουμε την πρώτη τιμή στον κουμπαρά.
+        current_in_types[current_in_count++] = (yyvsp[0].type_val); 
     }
-#line 1668 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\parser.tab.c"
+#line 1619 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\parser.tab.c"
     break;
 
   case 48: /* literal_list: literal_list COMMA literal  */
-#line 534 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\parser.y"
+#line 477 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\parser.y"
                                  {
-        current_in_types[current_in_count++] = (yyvsp[0].type_val); // Προσθέτουμε κι άλλες τιμές.
+        current_in_types[current_in_count++] = (yyvsp[0].type_val); 
     }
-#line 1676 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\parser.tab.c"
+#line 1627 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\parser.tab.c"
     break;
 
   case 54: /* limit_clause: LIMIT INT_VAL  */
-#line 554 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\parser.y"
+#line 494 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\parser.y"
                     {
-        // Το όριο πρέπει να είναι θετικός αριθμός! Δεν μπορείς να ζητήσεις -5 παιχνίδια.
         if ((yyvsp[0].ival) <= 0) {
             fprintf(stderr, "\n[Σημασιολογικό Σφάλμα] Στη γραμμή %d: Το όριο LIMIT πρέπει να είναι > 0.\n", line_num);
             exit(1);
         }
     }
-#line 1688 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\parser.tab.c"
+#line 1638 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\parser.tab.c"
     break;
 
 
-#line 1692 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\parser.tab.c"
+#line 1642 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\parser.tab.c"
 
       default: break;
     }
@@ -1881,42 +1831,31 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 563 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\parser.y"
+#line 505 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\parser.y"
 
 
-/* =========================================================================
-   ΣΥΝΑΡΤΗΣΕΙΣ C (Η ΦΩΝΗ ΤΟΥ ΡΟΜΠΟΤ ΚΑΙ Η ΕΚΚΙΝΗΣΗ)
-   ========================================================================= */
-
-// Η συνάρτηση που φωνάζει όταν βρούμε ένα συντακτικό λάθος στο βιβλίο!
 void yyerror(const char *s) {
     fprintf(stderr, "\n\n[Συντακτικό Σφάλμα] στη γραμμή %d: %s\n", line_num, s);
-    exit(1); // Το παιχνίδι κλείνει αμέσως με κλάματα!
+    exit(1);
 }
 
-// Η κύρια συνάρτηση (το κουμπί ON του ρομπότ):
 int main(int argc, char *argv[]) {
-    // Αν ξεχάσουμε να του δώσουμε το όνομα του αρχείου (το βιβλίο), μας το θυμίζει.
     if (argc < 2) {
         fprintf(stderr, "Χρήση: %s <όνομα_αρχείου>\n", argv[0]);
         return 1;
     }
 
-    // Ανοίγουμε το αρχείο για διάβασμα.
     FILE *file = fopen(argv[1], "r");
     if (!file) {
         fprintf(stderr, "Σφάλμα: Αδυναμία ανοίγματος του αρχείου '%s'\n", argv[1]);
         return 1;
     }
 
-    // Συνδέουμε το βοηθάκι μας (Flex) με το αρχείο.
     extern FILE *yyin;
     yyin = file;
-
     printf("--- Έναρξη Ανάλυσης Αρχείου ---\n");
-    yyparse(); // Λέμε στο ρομπότ: "Ξεκίνα να διαβάζεις τώρα!"
+    yyparse(); 
     printf("--- Τέλος Ανάλυσης (Όλα OK!) ---\n");
-
-    fclose(file); // Κλείνουμε το βιβλίο.
-    return 0;     // Το ρομπότ είναι χαρούμενο, όλα ήταν τέλεια!
+    fclose(file); 
+    return 0;     
 }

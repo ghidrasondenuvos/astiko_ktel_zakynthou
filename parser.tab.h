@@ -45,7 +45,7 @@
 extern int yydebug;
 #endif
 /* "%code requires" blocks.  */
-#line 122 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\parser.y"
+#line 108 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\parser.y"
 
     typedef struct {
         char table_or_alias[50];
@@ -106,13 +106,13 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 132 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\parser.y"
+#line 115 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\parser.y"
 
-    int ival;        // Ο σάκος μπορεί να κρατήσει έναν κανονικό αριθμό.
-    float fval;      // Ή έναν αριθμό με τελεία (δεκαδικό).
-    char *sval;      // Ή μια λέξη.
-    ColumnRef col;   // Ή μια στήλη με το όνομα του πίνακα της.
-    int type_val;    // Ή έναν κωδικό τύπου.
+    int ival;
+    float fval;      
+    char *sval;
+    ColumnRef col;   
+    int type_val;
 
 #line 118 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\parser.tab.h"
 

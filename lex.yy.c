@@ -546,9 +546,8 @@ char *yytext;
 
 extern int line_num;
 #line 548 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\lex.yy.c"
-/* Φτιάχνουμε ένα Κρυφό Δωμάτιο (COMMENT) για τα μεγάλα σχόλια */
 
-#line 551 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\lex.yy.c"
+#line 550 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\lex.yy.c"
 
 #define INITIAL 0
 #define COMMENT 1
@@ -766,10 +765,10 @@ YY_DECL
 		}
 
 	{
-#line 16 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\lexer.l"
+#line 15 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\lexer.l"
 
 
-#line 772 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\lex.yy.c"
+#line 771 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\lex.yy.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -828,253 +827,228 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 18 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\lexer.l"
-{ /* Τουβλάκι CREATE */ printf("%s", yytext); return CREATE; }
+#line 17 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\lexer.l"
+{ printf("%s", yytext); return CREATE; }
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 19 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\lexer.l"
-{ /* Τουβλάκι TABLE */ printf("%s", yytext); return TABLE; }
+#line 18 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\lexer.l"
+{ printf("%s", yytext); return TABLE; }
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 20 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\lexer.l"
-{ /* Τουβλάκι SELECT */ printf("%s", yytext); return SELECT; }
+#line 19 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\lexer.l"
+{ printf("%s", yytext); return SELECT; }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 21 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\lexer.l"
-{ /* Αυτοκόλλητο FROM */ printf("%s", yytext); return FROM; }
+#line 20 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\lexer.l"
+{ printf("%s", yytext); return FROM; }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 22 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\lexer.l"
-{ /* Αυτοκόλλητο WHERE */ printf("%s", yytext); return WHERE; }
+#line 21 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\lexer.l"
+{ printf("%s", yytext); return WHERE; }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 23 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\lexer.l"
-{ /* Αυτοκόλλητο GROUP */ printf("%s", yytext); return GROUP; }
+#line 22 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\lexer.l"
+{ printf("%s", yytext); return GROUP; }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 24 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\lexer.l"
-{ /* Αυτοκόλλητο BY */ printf("%s", yytext); return BY; }
+#line 23 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\lexer.l"
+{ printf("%s", yytext); return BY; }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 25 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\lexer.l"
-{ /* Αυτοκόλλητο ORDER */ printf("%s", yytext); return ORDER; }
+#line 24 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\lexer.l"
+{ printf("%s", yytext); return ORDER; }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 26 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\lexer.l"
-{ /* Αυτοκόλλητο LIMIT */ printf("%s", yytext); return LIMIT; }
+#line 25 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\lexer.l"
+{ printf("%s", yytext); return LIMIT; }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 27 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\lexer.l"
-{ /* Αυτοκόλλητο JOIN */ printf("%s", yytext); return JOIN; }
+#line 26 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\lexer.l"
+{ printf("%s", yytext); return JOIN; }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 28 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\lexer.l"
-{ /* Αυτοκόλλητο ON */ printf("%s", yytext); return ON; }
+#line 27 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\lexer.l"
+{ printf("%s", yytext); return ON; }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 29 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\lexer.l"
-{ /* Αυτοκόλλητο AS */ printf("%s", yytext); return AS; }
+#line 28 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\lexer.l"
+{ printf("%s", yytext); return AS; }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 31 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\lexer.l"
-{ /* Μόνο ολόκληροι αριθμοί */ printf("%s", yytext); return TYPE_INT; }
+#line 29 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\lexer.l"
+{ printf("%s", yytext); return TYPE_INT; }
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 32 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\lexer.l"
-{ /* Αριθμοί με τελεία/δεκαδικοί */ printf("%s", yytext); return TYPE_FLOAT; }
+#line 30 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\lexer.l"
+{ printf("%s", yytext); return TYPE_FLOAT; }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 33 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\lexer.l"
-{ /* Κείμενο ή λέξεις */ printf("%s", yytext); return TYPE_VARCHAR; }
+#line 31 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\lexer.l"
+{ printf("%s", yytext); return TYPE_VARCHAR; }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 35 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\lexer.l"
-{ /* Λογικό ΚΑΙ */ printf("%s", yytext); return AND; }
+#line 32 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\lexer.l"
+{ printf("%s", yytext); return AND; }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 36 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\lexer.l"
-{ /* Λογικό Ή */ printf("%s", yytext); return OR; }
+#line 33 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\lexer.l"
+{ printf("%s", yytext); return OR; }
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 37 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\lexer.l"
-{ /* Λογικό ΟΧΙ */ printf("%s", yytext); return NOT; }
+#line 34 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\lexer.l"
+{ printf("%s", yytext); return NOT; }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 38 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\lexer.l"
-{ /* Λογικό ΜΕΣΑ ΣΕ */ printf("%s", yytext); return IN; }
+#line 35 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\lexer.l"
+{ printf("%s", yytext); return IN; }
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 40 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\lexer.l"
-{ /* Σύμβολο ΙΣΟΝ */ printf("%s", yytext); return EQUALS; }
+#line 36 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\lexer.l"
+{ printf("%s", yytext); return EQUALS; }
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 41 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\lexer.l"
-{ /* Σύμβολο ΔΙΑΦΟΡΟ */ printf("%s", yytext); return NOT_EQUALS; }
+#line 37 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\lexer.l"
+{ printf("%s", yytext); return NOT_EQUALS; }
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 42 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\lexer.l"
-{ /* Μεγαλύτερο ή ίσο */ printf("%s", yytext); return GREATER_EQUAL; }
+#line 38 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\lexer.l"
+{ printf("%s", yytext); return GREATER_EQUAL; }
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 43 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\lexer.l"
-{ /* Μικρότερο ή ίσο */ printf("%s", yytext); return LESS_EQUAL; }
+#line 39 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\lexer.l"
+{ printf("%s", yytext); return LESS_EQUAL; }
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 44 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\lexer.l"
-{ /* Σκέτο Μεγαλύτερο */ printf("%s", yytext); return GREATER; }
+#line 40 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\lexer.l"
+{ printf("%s", yytext); return GREATER; }
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 45 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\lexer.l"
-{ /* Σκέτο Μικρότερο */ printf("%s", yytext); return LESS; }
+#line 41 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\lexer.l"
+{ printf("%s", yytext); return LESS; }
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 47 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\lexer.l"
-{ /* Κόμμα */ printf("%s", yytext); return COMMA; }
+#line 42 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\lexer.l"
+{ printf("%s", yytext); return COMMA; }
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 48 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\lexer.l"
-{ /* Ερωτηματικό για το τέλος της πρότασης */ printf("%s", yytext); return SEMICOLON; }
+#line 43 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\lexer.l"
+{ printf("%s", yytext); return SEMICOLON; }
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 49 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\lexer.l"
-{ /* Τελεία */ printf("%s", yytext); return DOT; }
+#line 44 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\lexer.l"
+{ printf("%s", yytext); return DOT; }
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 50 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\lexer.l"
-{ /* Ανοιχτή παρένθεση */ printf("%s", yytext); return LPAREN; }
+#line 45 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\lexer.l"
+{ printf("%s", yytext); return LPAREN; }
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 51 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\lexer.l"
-{ /* Κλειστή παρένθεση */ printf("%s", yytext); return RPAREN; }
+#line 46 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\lexer.l"
+{ printf("%s", yytext); return RPAREN; }
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 52 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\lexer.l"
-{ /* Αστεράκι για όλα τα παιχνίδια */ printf("%s", yytext); return ASTERISK; }
+#line 47 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\lexer.l"
+{ printf("%s", yytext); return ASTERISK; }
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 54 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\lexer.l"
-{ 
-                /* Βρήκα δεκαδικό αριθμό (π.χ. 3.14), τον βάζω στο σακίδιο */
-                printf("%s", yytext); 
-                yylval.fval = atof(yytext); 
-                return FLOAT_VAL; 
-              }
+#line 48 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\lexer.l"
+{ printf("%s", yytext); yylval.fval = atof(yytext); return FLOAT_VAL; }
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 61 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\lexer.l"
-{ 
-                /* Βρήκα ολόκληρο αριθμό (π.χ. 45), τον βάζω στο σακίδιο */
-                printf("%s", yytext); 
-                yylval.ival = atoi(yytext); 
-                return INT_VAL; 
-              }
+#line 49 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\lexer.l"
+{ printf("%s", yytext); yylval.ival = atoi(yytext); return INT_VAL; }
 	YY_BREAK
 case 34:
 /* rule 34 can match eol */
 YY_RULE_SETUP
-#line 68 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\lexer.l"
-{ 
-                /* Βρήκα λέξη μέσα σε εισαγωγικά (string), την αντιγράφω στο σακίδιο */
-                printf("%s", yytext); 
-                yylval.sval = strdup(yytext); 
-                return STRING_VAL; 
-              }
+#line 50 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\lexer.l"
+{ printf("%s", yytext); yylval.sval = strdup(yytext); return STRING_VAL; }
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 75 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\lexer.l"
-{ 
-                /* Βρήκα ένα κανονικό όνομα, το βάζω στο σακίδιο */
-                printf("%s", yytext); 
-                yylval.sval = strdup(yytext); 
-                return IDENTIFIER; 
-              }
+#line 51 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\lexer.l"
+{ printf("%s", yytext); yylval.sval = strdup(yytext); return IDENTIFIER; }
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 82 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\lexer.l"
-{ /* Σχόλιο μίας γραμμής: το τυπώνω αλλά δεν στέλνω τουβλάκι */ printf("%s", yytext); } 
+#line 52 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\lexer.l"
+{ printf("%s", yytext); } 
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 84 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\lexer.l"
-{ /* Μπαίνω στο κρυφό δωμάτιο των σχολίων */ BEGIN(COMMENT); printf("%s", yytext); }
+#line 53 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\lexer.l"
+{ BEGIN(COMMENT); printf("%s", yytext); }
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 85 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\lexer.l"
-{ /* Βγαίνω από το κρυφό δωμάτιο */ BEGIN(INITIAL); printf("%s", yytext); }
+#line 54 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\lexer.l"
+{ BEGIN(INITIAL); printf("%s", yytext); }
 	YY_BREAK
 case 39:
 /* rule 39 can match eol */
 YY_RULE_SETUP
-#line 86 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\lexer.l"
-{ /* Ανεβαίνω όροφο μέσα στο κρυφό δωμάτιο */ line_num++; printf("%s", yytext); }
+#line 55 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\lexer.l"
+{ line_num++; printf("%s", yytext); }
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 87 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\lexer.l"
-{ /* Οτιδήποτε άλλο μέσα στο κρυφό δωμάτιο, απλά το τυπώνω */ printf("%s", yytext); }
+#line 56 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\lexer.l"
+{ printf("%s", yytext); }
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 89 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\lexer.l"
-{ /* Αγνοώ τον αέρα ανάμεσα στις λέξεις (κενά, tabs) */ printf("%s", yytext); } 
+#line 57 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\lexer.l"
+{ printf("%s", yytext); } 
 	YY_BREAK
 case 42:
 /* rule 42 can match eol */
 YY_RULE_SETUP
-#line 90 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\lexer.l"
-{ /* Αλλαγή γραμμής: ανεβαίνω όροφο στο κανονικό παιχνίδι */ printf("%s", yytext); line_num++; } 
+#line 58 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\lexer.l"
+{ printf("%s", yytext); line_num++; } 
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 92 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\lexer.l"
-{ 
-                /* Άγνωστος χαρακτήρας: βάζω τα κλάματα και σταματάω! */
-                printf("%s", yytext); 
-                fprintf(stderr, "\n\n[Λεκτικό Σφάλμα] Άγνωστος χαρακτήρας '%s' στη γραμμή %d\n", yytext, line_num); 
-                exit(1); 
-              }
+#line 59 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\lexer.l"
+{ printf("%s", yytext); fprintf(stderr, "\n[Λεκτικό Σφάλμα] Άγνωστος χαρακτήρας '%s' στη γραμμή %d\n", yytext, line_num); exit(1); }
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 99 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\lexer.l"
+#line 60 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\lexer.l"
 ECHO;
 	YY_BREAK
-#line 1077 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\lex.yy.c"
+#line 1051 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 case YY_STATE_EOF(COMMENT):
 	yyterminate();
@@ -2080,5 +2054,5 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 99 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\lexer.l"
+#line 60 "C:\\Users\\Sophia Giakmoglidou\\Desktop\\projectA\\lexer.l"
 
