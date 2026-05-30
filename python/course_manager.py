@@ -49,14 +49,16 @@ if not os.path.exists(CSV_FILENAME):
     ])
     df_init.to_csv(CSV_FILENAME, index=False, encoding="utf-8-sig")
 
-# --- Υβριδικό Μοντέλο Συλλογής Δεδομένων ---
+# --- Συλλογή Δεδομένων 
 def fetch_all_data():
     """Κεντρική συνάρτηση που αντλεί δεδομένα live. Αν μια πηγή βγάλει 404, την προσπερνάει έξυπνα."""
+    # Design Decision: Υιοθετήθηκε υβριδικό μοντέλο συλλογής για να επιτευχθεί το ζητούμενο 
+    # για 6 διαφορετικές πηγές δεδομένων (3 API & 3 Scraping).
     new_courses = []
     headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"}
     
     blacklist = [
-        "αρχική", "σύνδεση", "εγγραφή", "όροι", "χρήσης", "πολιτική", "απόρρητο", "βοήθεια", 
+        "ΑΝΕΝΕΡΓΟ", "αρχική", "σύνδεση", "εγγραφή", "όροι", "χρήσης", "πολιτική", "απόρρητο", "βοήθεια", 
         "επικοινωνία", "εγχειρίδιο", "αναζήτηση", "μενού", "προφίλ", "news", "events",
         "home", "login", "sign up", "terms", "privacy", "about", "contact", "cookies", 
         "support", "search", "menu", "navigation", "facebook", "twitter", "linkedin",
@@ -203,6 +205,10 @@ def fetch_all_data():
         messagebox.showerror("Σφάλμα Δικτύου", "Δεν ήταν δυνατή η επικοινωνία με καμία live πηγή διαδικτύου.")
         return
 
+    # Design Decision: Κανονικοποίηση (Normalization) με keyword-based mapping. 
+    # Οι πηγές δεδομένων χρησιμοποιούν ανομοιογενείς όρους, οπότε επιλέξαμε 
+    # αυτό το σύστημα για να εξασφαλίσουμε ότι το GUI παρουσιάζει συνεκτικά 
+    # φίλτρα στον χρήστη.
     print("[Normalization] Status: Processing data with Pandas...")
     normalized_data = []
     for item in new_courses:
@@ -242,6 +248,8 @@ def manual_scrape_trigger():
         messagebox.showinfo("Ενημέρωση", f"Η συλλογή ολοκληρώθηκε μέσω διαδικτύου. Συνολικά μαθήματα στη βάση: {total_rows}")
 
 def scheduler_worker():
+    # Design Decision: Επιλέχθηκε interval 60s για να προσφέρει άμεση αίσθηση 
+    # ενημέρωσης, αποφεύγοντας το συχνό HTTP flooding στις πηγές, γιατι ενδεχεται κάποια API να μας banάρουν
     while True:
         if scheduler_active.get():
             try:
@@ -262,7 +270,7 @@ def load_data_into_ui(event=None):
         return
         
     df = pd.read_csv(CSV_FILENAME)
-    df = df[~df["Τίτλος μαθήματος"].astype(str).str.contains("ΑΝΕΝΕ延Ο", na=False)]
+    df = df[~df["Τίτλος μαθήματος"].astype(str).str.contains("ΑΝΕΝΕΡΓΟ", na=False)]
     
     if filter_cat and filter_cat != "Οποιαδήποτε κατηγορία":
         df = df[df["Θεματική κατηγορία"] == filter_cat]
@@ -311,6 +319,10 @@ def get_recommendations():
         rec_output.config(text="Δεν βρέθηκαν μαθήματα που να ικανοποιούν τα κριτήρια.")
         return
 
+    # Design Decision: Composite Score Weighting Strategy.
+    # Χρησιμοποιούμε 0.6 για Διάρκεια και 0.4 για Κόστος. 
+    # Αιτιολόγηση: Προτεραιοποιούμε την εις βάθος μάθηση (μεγαλύτερη διάρκεια), 
+    # εξισορροπώντας με το χαμηλό κόστος για να βρούμε την καλύτερη αξία (Value-for-time/money).
     df_filtered = df_filtered.copy()
     if df_filtered["Διάρκεια"].isnull().any():
         median_dur = df["Διάρκεια"].median() if not df["Διάρκεια"].isnull().all() else 20.0
@@ -347,6 +359,8 @@ def export_new_csv():
 is_dark_mode = True
 
 def toggle_theme():
+    # Design Decision: Παρέχουμε εναλλαγή σε dark mode για τη βελτίωση της εμπειρίας 
+    # χρήστη σε συνθήκες χαμηλού φωτισμού.
     global is_dark_mode
     is_dark_mode = not is_dark_mode
     apply_theme_colors()
@@ -397,7 +411,6 @@ def apply_theme_colors():
 window = tk.Tk()
 window.geometry("1450x880")
 
-# ΕΝΑΡΜΟΝΙΣΗ ΜΕ ΕΚΦΩΝΗΣΗ: Ο επίσημος τίτλος του παραθύρου αναγράφει όλα τα μέλη της ομάδας
 window.title("Τσανακτσής Δημήτριος (1100736) - Μπαράκου Ιωάννα-Γεωργία (1108369) - Ευθυμιάδη Θεοδώρα (1108391)")
 
 available_families = font.families()
