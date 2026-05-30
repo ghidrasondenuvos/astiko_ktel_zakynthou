@@ -1,0 +1,4 @@
+-- ΣΦΑΛΜΑ: Έγινε ορισμός alias 'D' για το Departments, 
+-- αλλά χρησιμοποιήθηκε το αρχικό όνομα στο SELECT!
+SELECT Departments.d_name 
+FROM Departments AS D;

@@ -1,0 +1,7 @@
+C:\WINFLEXBISON\win_bison.exe -d -v -o parser.tab.c parser.y
+
+C:\WINFLEXBISON\win_flex.exe -o lex.yy.c lexer.l
+
+C:\msys64\ucrt64\bin\gcc.exe -g lex.yy.c parser.tab.c -o program.exe
+
+.\program.exe test.txt
